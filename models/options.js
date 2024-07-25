@@ -9,14 +9,14 @@ const optionsSchema = mongoose.Schema({
     },
     text: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     votes: {
         type: Number
     },
     link_to_vote: {
         type: String,
-        required: true
     }
 })
 

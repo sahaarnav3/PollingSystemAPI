@@ -11,8 +11,7 @@ router.get('/home', (req, res) => {
 
 router.post('/questions/create', questionController.createQuestion);
 router.post('/questions/:id/options/create', questionController.createOptions);
-
-
+router.get('/options/:id/add_vote', questionController.addVote);
 
 
 module.exports = router;

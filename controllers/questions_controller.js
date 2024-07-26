@@ -53,3 +53,16 @@ module.exports.createOptions = async(req, res) => {
     }
     return res.json({ response: "Option Added", link_to_vote: linkToVote });
 }
+
+module.exports.addVote = async(req, res) => {
+    let optionId = req.params.id;
+    try {
+        let optionDetails = await Option.findById(optionId);
+        optionDetails.votes += 1;
+        await optionDetails.save();
+        return res.json({ response: 'Vote count Successfully Increased.', "Vote Count": optionDetails.votes });
+    } catch (err) {
+        console.log("This error occured while increasing vote count = ", err);
+    }
+    return res.json({ response: "Given Option ID Not Found. Please Try Again With Correct ID." });
+}

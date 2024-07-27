@@ -18,7 +18,7 @@ const optionsSchema = mongoose.Schema({
     link_to_vote: {
         type: String,
     }
-})
+});
 
 const Options = mongoose.model('Options', optionsSchema);
 module.exports = Options;

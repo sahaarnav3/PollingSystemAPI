@@ -48,10 +48,34 @@ module.exports.createOptions = async(req, res) => {
     } catch(err) {
         console.log("This error occured in creating the Option :- ", err);
         if(err.code == 11000)
-            return res.json({ response: "This option already exists. Please try again with noew option." });
+            return res.json({ response: "This option already exists. Please try again with new option." });
         return res.json({ response: "Error Occured While Adding Option to DB. Please Try Again." });
     }
     return res.json({ response: "Option Added", link_to_vote: linkToVote });
+}
+
+module.exports.deleteQuestion = async(req, res) => {
+    let questionId = req.params.id;
+    let results = '';
+    try {
+        results = await Option.find({
+            question_id: questionId,
+            votes: { $gte: 1 } //filter options having votes greater than or equal to 1.
+        });
+    } catch (err) {
+        console.log("This Error is occuring while fetching votes from DB", err);
+        return res.json({ response: 'Some Error occured while fetching and deleting data from DB. Please try again' });
+    }
+    if(results.length > 0)
+        return res.json({ Response: "Question can't be deleted since One or More of it's options has 1 or more than 1 votes" });
+    try {
+        await Question.findByIdAndDelete(questionId);
+        await Option.deleteMany({ question_id: questionId });
+        return res.json({ Response: "Question Deleted Successfully." });
+    } catch (err) {
+        console.log("This error occured while deleting the options from Option Collection (with a particular question_id)", err);
+    }
+    return res.json({ Response: "Some error occured. Please try again" });
 }
 
 module.exports.addVote = async(req, res) => {

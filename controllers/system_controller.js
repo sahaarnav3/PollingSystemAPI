@@ -9,7 +9,7 @@ module.exports.createQuestion = async (req, res) => {
             title: req.body.question
         }));
         // console.log(newQuestion);
-    } catch(err) {
+    } catch (err) {
         console.log("This error occured in creating the Question :- ", err);
         if (err.code == 11000)
             return res.json({ 'Error': 'This Question Already Exists. Try Again With Another Question' });
@@ -17,15 +17,15 @@ module.exports.createQuestion = async (req, res) => {
     res.json({ response: "Question Created", 'Question Id': newQuestion['_id'] });
 }
 
-module.exports.createOptions = async(req, res) => {
+module.exports.createOptions = async (req, res) => {
     // console.log("question id = ", req.params.id, " Option value = ", req.body.option );
     let newOption = "";
     let linkToVote = "";
-    
+
     //let's first try to check if the question id given is even correct or not
     try {
         let questionExists = await Question.findById(req.params.id);
-        if(!questionExists)
+        if (!questionExists)
             return res.json({ response: "Question ID Given doesn't exists. Please try again with correct ID." });
     } catch (err) {
         console.log("This error occured while searching if Qustion exists --", err);
@@ -40,21 +40,21 @@ module.exports.createOptions = async(req, res) => {
             votes: 0,
             link_to_vote: null
         }));
-        if(newOption){
+        if (newOption) {
             linkToVote = `http://localhost:${process.env.PORT}/options/${newOption._id}/add_vote`;
             newOption.link_to_vote = linkToVote;
             await newOption.save();
         }
-    } catch(err) {
+    } catch (err) {
         console.log("This error occured in creating the Option :- ", err);
-        if(err.code == 11000)
+        if (err.code == 11000)
             return res.json({ response: "This option already exists. Please try again with new option." });
         return res.json({ response: "Error Occured While Adding Option to DB. Please Try Again." });
     }
     return res.json({ response: "Option Added", link_to_vote: linkToVote });
 }
 
-module.exports.deleteQuestion = async(req, res) => {
+module.exports.deleteQuestion = async (req, res) => {
     let questionId = req.params.id;
     let results = '';
     try {
@@ -66,7 +66,7 @@ module.exports.deleteQuestion = async(req, res) => {
         console.log("This Error is occuring while fetching votes from DB", err);
         return res.json({ response: 'Some Error occured while fetching and deleting data from DB. Please try again' });
     }
-    if(results.length > 0)
+    if (results.length > 0)
         return res.json({ Response: "Question can't be deleted since One or More of it's options has 1 or more than 1 votes" });
     try {
         await Question.findByIdAndDelete(questionId);
@@ -78,12 +78,12 @@ module.exports.deleteQuestion = async(req, res) => {
     return res.json({ Response: "Some error occured. Please try again" });
 }
 
-module.exports.deleteOption = async(req, res) => {
+module.exports.deleteOption = async (req, res) => {
     let optionId = req.params.id;
     let result = "";
     try {
         result = await Option.findById(optionId);
-        if(result.votes > 0)
+        if (result.votes > 0)
             return res.json({ Response: "This option can't be deleted since it has greater than equal to 1 vote." });
         else {
             await Option.findByIdAndDelete(optionId);
@@ -96,7 +96,7 @@ module.exports.deleteOption = async(req, res) => {
     return res.json({ Response: "Some error occured while deleting option. Please try again." });
 }
 
-module.exports.addVote = async(req, res) => {
+module.exports.addVote = async (req, res) => {
     let optionId = req.params.id;
     try {
         let optionDetails = await Option.findById(optionId);
@@ -107,4 +107,30 @@ module.exports.addVote = async(req, res) => {
         console.log("This error occured while increasing vote count = ", err);
     }
     return res.json({ response: "Given Option ID Not Found. Please Try Again With Correct ID." });
+}
+
+module.exports.viewDetails = async (req, res) => {
+    let questionId = req.params.id;
+    let questionResponse = "";
+    let optionResponse = "";
+    try {
+        questionResponse = await Question.findById(questionId);
+        optionResponse = await Option.find({
+            question_id: questionId
+        }, {
+            _id : 1,
+            text : 1,
+            votes : 1,
+            link_to_vote : 1
+        });
+        let finalResponse = {
+            id: questionId,
+            title: questionResponse.title,
+            options: optionResponse
+        }
+        return res.json(finalResponse);
+    } catch (err) {
+        console.log("This error occured while fetching details of both Question & Option.-", err);
+        return res.json({ Response: "Some problem with the Question ID. Please Try again." });
+    }
 }

@@ -78,6 +78,24 @@ module.exports.deleteQuestion = async(req, res) => {
     return res.json({ Response: "Some error occured. Please try again" });
 }
 
+module.exports.deleteOption = async(req, res) => {
+    let optionId = req.params.id;
+    let result = "";
+    try {
+        result = await Option.findById(optionId);
+        if(result.votes > 0)
+            return res.json({ Response: "This option can't be deleted since it has greater than equal to 1 vote." });
+        else {
+            await Option.findByIdAndDelete(optionId);
+            return res.json({ Response: "Option Deleted Successfully." });
+        }
+    } catch (err) {
+        console.log("This error occured while fetching option from DB (For deleting option controller) -", err);
+        return res.json({ Response: "The ID given doesn't exists. Please try again with correct ID." });
+    }
+    return res.json({ Response: "Some error occured while deleting option. Please try again." });
+}
+
 module.exports.addVote = async(req, res) => {
     let optionId = req.params.id;
     try {

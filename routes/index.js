@@ -18,5 +18,7 @@ router.post('/questions/:id/delete', systemController.deleteQuestion);
 
 router.get('/options/:id/add_vote', systemController.addVote);
 
+//Below router is used to delete an option.
+router.post('/options/:id/delete', systemController.deleteOption);
 
 module.exports = router;

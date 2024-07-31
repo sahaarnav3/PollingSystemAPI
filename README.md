@@ -8,9 +8,9 @@ This is a backend api for creating questions and adding options to a specific qu
 | ---------- | -----------------------------------| -------------------------------------- |
 | POST       | /questions/create                  | To create a  question                  |
 | POST       | /questions/:id/options/create      | To add options to a specific question  |
-| DELETE     | /questions/:id/delete              | To delete a question                   |
-| DELETE     | /options/:id/delete                | To delete an option                    |
-| PUT        | /options/:id/add_vote              | To increase the count of votes         |
+| POST       | /questions/:id/delete              | To delete a question                   |
+| POST       | /options/:id/delete                | To delete an option                    |
+| GET        | /options/:id/add_vote              | To increase the count of votes         |
 | GET        | /questions/:id                     | To view a question and its options     |
 
 ## Tech stack

@@ -1,6 +1,9 @@
+// This is the main controller file which has the logic/code for all the controller functions.
+
 const Option = require('../models/options');
 const Question = require('../models/questions');
 
+//Below Controller is used to create a new question.
 module.exports.createQuestion = async (req, res) => {
     // console.log(req.body.keyOne, "port = ", process.env.PORT);
     let newQuestion = "";
@@ -17,6 +20,7 @@ module.exports.createQuestion = async (req, res) => {
     res.json({ response: "Question Created", 'Question Id': newQuestion['_id'] });
 }
 
+//Below Controller is used to create options for a particular question
 module.exports.createOptions = async (req, res) => {
     // console.log("question id = ", req.params.id, " Option value = ", req.body.option );
     let newOption = "";
@@ -54,6 +58,7 @@ module.exports.createOptions = async (req, res) => {
     return res.json({ response: "Option Added", link_to_vote: linkToVote });
 }
 
+//Below Controller is used to delete a question.(Only if all the options to that qeustion has zero votes)
 module.exports.deleteQuestion = async (req, res) => {
     let questionId = req.params.id;
     let results = '';
@@ -78,6 +83,7 @@ module.exports.deleteQuestion = async (req, res) => {
     return res.json({ Response: "Some error occured. Please try again" });
 }
 
+//Below Controller is used to delete a particular option(Only if has zero votes to it.)
 module.exports.deleteOption = async (req, res) => {
     let optionId = req.params.id;
     let result = "";
@@ -96,6 +102,7 @@ module.exports.deleteOption = async (req, res) => {
     return res.json({ Response: "Some error occured while deleting option. Please try again." });
 }
 
+//Below Controller is used to add vote count for a particular option.
 module.exports.addVote = async (req, res) => {
     let optionId = req.params.id;
     try {
@@ -109,6 +116,7 @@ module.exports.addVote = async (req, res) => {
     return res.json({ response: "Given Option ID Not Found. Please Try Again With Correct ID." });
 }
 
+//Below Controller is used to see everything related to a question and it's options.
 module.exports.viewDetails = async (req, res) => {
     let questionId = req.params.id;
     let questionResponse = "";
